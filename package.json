@@ -48,6 +48,7 @@
     "test:watch": "vitest",
     "smoke": "tsx scripts/live-smoke.ts",
     "example:echo": "tsx examples/echo-bot.ts",
+    "example:run-all": "tsx examples/run-all-bot.ts",
     "prepare": "pnpm build",
     "prepublishOnly": "pnpm build"
   },
