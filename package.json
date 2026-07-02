@@ -1,0 +1,66 @@
+{
+  "name": "photon-wechat-sdk",
+  "version": "0.1.0",
+  "description": "WeChat provider for Spectrum (Photon) — bring your agent to WeChat via the agent-wechat server, with strictly separate history and processing per contact.",
+  "keywords": [
+    "spectrum",
+    "photon",
+    "wechat",
+    "weixin",
+    "agent",
+    "chatbot",
+    "definePlatform",
+    "agent-wechat"
+  ],
+  "license": "MIT",
+  "author": "Mootbing",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mootbing/photon-wechat-sdk.git"
+  },
+  "homepage": "https://github.com/Mootbing/photon-wechat-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/Mootbing/photon-wechat-sdk/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "smoke": "tsx examples/echo-bot.ts",
+    "prepublishOnly": "pnpm build"
+  },
+  "peerDependencies": {
+    "@spectrum-ts/core": "^8.2.0"
+  },
+  "dependencies": {
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@spectrum-ts/core": "^8.2.0",
+    "@types/node": "^22.10.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
