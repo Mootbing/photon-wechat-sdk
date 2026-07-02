@@ -50,6 +50,17 @@ export function messageKey(m: WeChatMessage): string {
   return `${m.chatId}:f:${m.timestamp}:${m.sender ?? ""}:${m.content.length}`;
 }
 
+/** Parse a `messageKey`-formatted id back into its lookup parts. */
+export function parseMessageKey(
+  id: string,
+): { chatId: string; localId?: number; serverId?: number } | null {
+  const local = id.match(/^(.+):l:(\d+)$/);
+  if (local) return { chatId: local[1]!, localId: Number(local[2]) };
+  const server = id.match(/^(.+):s:(\d+)$/);
+  if (server) return { chatId: server[1]!, serverId: Number(server[2]) };
+  return null;
+}
+
 /** A change marker so unchanged chats can be skipped between polls. */
 export function activityMarker(chat: WeChatChat): string {
   return `${chat.lastMsgLocalId ?? ""}|${chat.lastActivityAt ?? ""}|${chat.unreadCount}`;

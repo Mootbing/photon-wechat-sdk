@@ -2,12 +2,17 @@ import { randomUUID } from "node:crypto";
 import { definePlatform, stream } from "@spectrum-ts/core";
 import { z } from "zod";
 import { AgentWeChatClient } from "./client.js";
-import { deliverContent } from "./content.js";
+import { deliverContent, inboundContent } from "./content.js";
 import { ensureLoggedIn, type LoginLogger } from "./login.js";
 import {
   baseline,
+  isGroupChat,
+  messageKey,
   newPollState,
+  parseMessageKey,
+  parseTimestamp,
   pollOnce,
+  resolveSenderId,
   type PollLogger,
   type PollState,
   type WeChatInbound,
@@ -141,6 +146,28 @@ export const wechat = definePlatform("WeChat", {
         await loop.catch(() => {});
       };
     });
+  },
+  actions: {
+    getMessage: async ({ client }, space, messageId) => {
+      const rt = client as WeChatRuntime;
+      const parsed = parseMessageKey(messageId);
+      const chatId = parsed?.chatId ?? space.id;
+      const msgs = await rt.api.listMessages(chatId, rt.config.messageLimit);
+      const found = msgs.find((m) => messageKey(m) === messageId);
+      if (!found) return undefined;
+      const content = await inboundContent(rt.api, found, rt.config);
+      if (!content) return undefined;
+      const group = isGroupChat(found.chatId);
+      const senderId = resolveSenderId(found, group);
+      if (!senderId) return undefined;
+      return {
+        id: messageId,
+        content,
+        sender: { id: senderId },
+        space: { id: found.chatId },
+        timestamp: parseTimestamp(found.timestamp),
+      };
+    },
   },
   send: async ({ client, content, space }) => {
     if (content.type === "typing" || content.type === "read") {
